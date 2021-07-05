@@ -116,5 +116,32 @@ var name = undefined;
 
 4. ``` myName = '极客世界' ```存入到变量环境，并加上外部执行作用域。``` test1 = 100``` 推入词法环境栈，同理，```myName = 'Chrome浏览器'```推入。
 
+# this
+- 为了让对象内部的方法能使用对象内部的属性，所以出现了this机制。
 
+- 他和作用域链是完全不同的两套系统，又和执行上下文绑定在一起。
+
+![](https://static001.geekbang.org/resource/image/b3/8d/b398610fd8060b381d33afc9b86f988d.png)
+
+- 包括全局执行上下文中的this - window对象，函数执行上下文，eval中的this；
+
+- 函数执行上下文的this
+    * call设置；
+    * 通过对象调用，例如：myObj.say(), this为myObj；say()，this为window
+    * 构造函数中，this指向传入的参数；
+
+- this缺陷
+    * 嵌套函数中，this不能从外部函数中继承，一般通过变量self定义this，或者箭头函数（不会创建自身的执行上下文）。
+    ```JS
+    var myObj = {
+    name : "极客时间", 
+    showThis: function(){
+        console.log(this)
+        function bar(){console.log(this)}
+        bar()
+    }
+    }
+    myObj.showThis() // '极客时间'， 'window'
+    ```
+    * 默认指向全局变量window。
 
