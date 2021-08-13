@@ -16,3 +16,40 @@
 - 跨域资源共享「CORS」和跨文档消息机制。
   - 可以进行跨域访问控制资源。
   - 跨文档消息机制可以使用window.postMessage来对不同源进行通讯。
+
+# XSS跨域资源共享
+
+- Cross site scripting。是指黑客往HTTP文件或者DOM中注入脚本，在用户浏览页面时利用注入的脚本对用户进行攻击的手段。
+
+### 攻击方式
+- 窃取Cookie信息。例如：通过document.cookie，或者XMLHttpRequest或者Fetch添加CORS功能将数据发给「恶意服务器」，拿到Cookie相关信息。
+- 添加事件。监听用户行为。
+- 修改DOM。伪造登陆窗口。
+- 页面生成浮窗广告。
+
+### 注入方式
+- 存储型XSS攻击。
+    - 利用站点漏洞将恶意JS提交到网站数据库中。
+    - 普通用户向网站请求包含恶意JS脚本的代码。
+    - 浏览时就可以将用户Cookie上传到服务器。
+  ![](https://static001.geekbang.org/resource/image/54/49/5479e94a06d9a7cdf3920c60bf834249.png)
+- 反射型XSS攻击。恶意JS属于网站请求中的一部分，随后网站又把恶意JS返回给用户。从而执行JS脚本。「web服务器不会存储xss攻击的恶意脚本」。
+![](/image/反射型XSS.png)
+- DOM型的XSS攻击。在「web资源传输的过程中」或者在「用户操作页面」过程中修改web页面中的数据。
+
+### 如何防止
+- 存储型和反射型都需要经过web服务器处理。但DOM的XSS是浏览器端的漏洞。
+- XSS攻击都需要给浏览器「注入恶意脚本」，然后通过恶意脚本将用户信息「发送至恶意服务器」。
+
+- 策略
+  - 服务器对输入脚本进行「过滤」或者「转码」。对关键字符进行转换，例如：转换或者过滤```<script>```里的内容。
+  - 充分利用CSP。（重要）
+    - 限制加载其他域下的资源文件。JS文件
+    - 禁止第三方域提交信息。
+    - 禁止执行内陆脚本和未授权脚本。
+    - 提供上报功能。
+  - 比较重要的数据设置「HttpOnly」属性。很多脚本都是盗用用户的登录凭证。设置了HttpOnly，标志Cookie只能使用在Http请求过程。无法通过JS拿到。
+  ```
+  set-cookie: NID=189=M8q2FtWbsR8RlcldPVt7qkrqR38LmFY9jUxkKo3-4Bi6Qu_ocNOat7nkYZUTzolHjFnwBw0izgsATSI7TZyiiiaV94qGh-BzEYsNVa7TZmjAYTxYTOM9L_-0CN9ipL6cXi8l6-z41asXtm2uEwcOC5oh9djkffOMhWqQrlnCtOI; expires=Sat, 18-Apr-2020 06:52:22 GMT; path=/; domain=.google.com; HttpOnly
+  ```
+  - 添加验证码。限制输入长度等。
