@@ -11,3 +11,37 @@
 - 业务组件里的组件代码大小
 
 - PS：babel-polyfill
+
+## dll分包
+- 将多个基础库包装成一个包，减少每个文件的大小。不分析里面基础库的代码，直接抽离出来成一起的一个包。
+
+## 缓存 - 提升解析速度
+- babel-loader。JS转化缓存。
+- uglify js。
+- 模块解析缓存。
+
+## 缩小构建目标
+- 减少文件搜索范围
+  - 优化resolve.modules，减少模块搜索层级。
+  - 优化resolve.mainFields，入口文件
+  - 优化resolve.extension，文件扩展名，webpack先找js，再找json
+  - 合理应用alias。
+- babel-loader。不解析node_module
+
+## 资源体积压缩
+
+###  图片压缩
+- image-webpack-plugin。「imagemin」
+- 压缩原理：
+  - pngquant。将图像转化为具有alpha通道的更高效的8位png格式（比24/32位小60~80%）。
+  - pngcrush。不同压缩级别，降低png IDAT数据流大小，压缩级别越多，体积越小
+  - optipng。重新压缩
+  - tinypng。24位转8位，非必要的metadata会被剥离。
+
+### tree shaking css
+- purifyCSS，遍历代码。识别用到的css，没有就标记。
+- uncss。jsdom加载。
+
+### 动态polyfill
+- babel-polyfill。
+- polyfill-service。通过UA拿到引擎，动态下发polyfill。
