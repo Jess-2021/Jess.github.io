@@ -1,4 +1,6 @@
-# 虚拟DOM
+# [虚拟DOM](./性能优化/虚拟DOM.md)
+
+- 模板 -> 渲染函数 -> - vnode -- patch --> oldVnode -> 视图
 
 ## patch
 
