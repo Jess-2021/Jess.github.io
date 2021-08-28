@@ -160,3 +160,60 @@ export function nextTick(cb, ctx) {
     1. 获取对应的挂载元素。
     2. 触发钩子函数。beforeMount
     3. 通过watcher监听到data里，或者watcher参数里值的变化，diff后，生成渲染函数，就是执行渲染流程。
+
+## 全局API实现原理
+
+## Vue.extend - 子类继承父类的相关属性选项。
+- 实现：
+  - 增加了缓存策略，在反复调用extend方法后，返回的是同一个结果。
+  - 创建子类，并将他返回，还未有继承逻辑。
+  - 新增原型链继承，并且为子类添加cid（每一个子类的唯一标识）。
+  - 合并两个选项为一个新对象。
+  - 初始化props，computed，将key代理到props中。
+  - 将父类存在的属性依次复制到子类中，包括extend，mixin，use，component，directive，filter。同时，在子类上新增superOptions，extendOptions，sealedOptions。
+  ```JS
+  sub.prototype = Object.create(Super.prototype)
+  sub.constructor = Sub
+  sub.cid = cid++
+  ```
+
+## Vue.nextTick & Vue.set & Vue.delete
+- 三个实现原理和之前一致。
+- set，delete会触发视图更新。
+
+## Vue.directive & Vue.filter & Vue.component
+- 指令。需要对DOM进行底层操作。
+- 实现：
+  1. 方法接受两个参数「id」和「definition」。
+  2. 如果definition不存在，则使用id从this.options中取出，并返回。
+  3. 如果存在，说明是注册操作，将其绑定在this.options[type]上。
+
+- 指令还需判断definition是否是函数
+  1. 默认监听bind和update事件，并使用对象覆盖definition。
+  2. 如果definition不是函数，说明是自定义指令，直接保存在this.options上。
+- 组件需要添加definition.name属性。
+  ```JS
+  // 以指令为例
+  if (!definition) {
+    return this.options['directive'][id]
+  } else {
+    if (typeof definition === 'function') {
+      definition = { bind: definition, update: definition }
+    }
+    this.options['directives'][id] = definition
+    return definition
+  }
+  ```
+
+## Vue.use
+- 如果插件是一个对象，必须提供install方法，接受一个Vue构造函数作为参数。
+- 如果是一个函数，会被作为install方法。
+- 多次调用会只执行一次。
+- 除了构造函数之外的参数会被传入plugin。（类似call）
+
+## Vue.mixin
+- 全局注册混入。会更改Vue.options会影响每一个实例。
+- 实现：将用户传入的对象与Vue自身的options属性合在一起。
+
+## Vue.compile
+- 只在完整版有。编译模板字符串并返回包含渲染函数的对象。
