@@ -16,7 +16,6 @@ function merge(arr, left, right, mid) {
   while(j <= right) temp[k++] = arr[j++];
   // console.log(temp)
   for(let p = 0; p < temp.length; p++) {
-    if (temp.length === 6) console.log(temp, temp[p])
     arr[left + p] = temp[p]
   }
 }
