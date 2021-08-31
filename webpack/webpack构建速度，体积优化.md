@@ -12,13 +12,20 @@
 
 - PS：babel-polyfill
 
+## 多进程，多实例构建：资源并行解析
+- 每次webpack解析一个模块，thead-loader会将他的依赖分配给多个worker线程中执行。
+
+## 多进程，多实例构建：资源并行压缩
+- parallel-ugify-plugin,terser-webpack-plugin并行压缩。
 ## dll分包
 - 将多个基础库包装成一个包，减少每个文件的大小。不分析里面基础库的代码，直接抽离出来成一起的一个包。
+- 在externals，或者splitChunks之上进一步进行分包，将多个基础库通过dllPlugin打成一个包。
+- 通过dllPlugin分包，同时在输出HTML文件时，通过dllReferencePlugin引用manifest类似输出文件。
 
 ## 缓存 - 提升解析速度
 - babel-loader。JS转化缓存。
-- uglify js。
-- 模块解析缓存。
+- uglify js。（terser-webpack-plugin）
+- 模块解析缓存。（cache-loader）
 
 ## 缩小构建目标
 - 减少文件搜索范围
@@ -39,6 +46,7 @@
   - tinypng。24位转8位，非必要的metadata会被剥离。
 
 ### tree shaking css
+- 如果模块一个函数被引用了，就把所有的方法都引入。
 - purifyCSS，遍历代码。识别用到的css，没有就标记。
 - uncss。jsdom加载。
 
