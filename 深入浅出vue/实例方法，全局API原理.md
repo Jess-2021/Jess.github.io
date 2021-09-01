@@ -96,7 +96,7 @@ if (vm._watcher) {
   vm._watcher.teardown()
   ```
 
-## 3. vm.$nextTick
+## 3. vm.$nextTick - 事件循环
 - 将回调延迟到下次DOM更新周期之后执行，如果没有提供回调且支持Promise返回一个Promise。
 ```JS
 export function nextTick(cb, ctx) {

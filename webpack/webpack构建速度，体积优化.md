@@ -20,7 +20,7 @@
 ## dll分包
 - 将多个基础库包装成一个包，减少每个文件的大小。不分析里面基础库的代码，直接抽离出来成一起的一个包。
 - 在externals，或者splitChunks之上进一步进行分包，将多个基础库通过dllPlugin打成一个包。
-- 通过dllPlugin分包，同时在输出HTML文件时，通过dllReferencePlugin引用manifest类似输出文件。
+- 通过dllPlugin分包，同时在输出HTML文件时，通过dllReferencePlugin通过manifest.json映射到相应的依赖上。
 
 ## 缓存 - 提升解析速度
 - babel-loader。JS转化缓存。
