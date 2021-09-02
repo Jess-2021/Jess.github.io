@@ -96,7 +96,7 @@ if (vm._watcher) {
   vm._watcher.teardown()
   ```
 
-## 3. vm.$nextTick - 事件循环
+## 3. vm.$nextTick - 消息队列
 - 将回调延迟到下次DOM更新周期之后执行，如果没有提供回调且支持Promise返回一个Promise。
 ```JS
 export function nextTick(cb, ctx) {
@@ -114,7 +114,7 @@ export function nextTick(cb, ctx) {
   }
 }
 ```
-- vue中有一个队列，每当需要渲染时，会推送到这个队列，在下一次事件循环中让watcher触发渲染的流程。而当watcher收到两个通知时，并不需要真实DOM两次修改，只需要更新虚拟DOM，在最后做一次性的修改即可。
+- vue中有一个「队列」，每当需要渲染时，会推送到这个队列，在下一次事件循环中让watcher触发渲染的流程。而当watcher收到两个通知时，并不需要真实DOM两次修改，只需要更新虚拟DOM，在最后做一次性的修改即可。
 - 变化监测 -> 组件watcher -> 虚拟DOM -> diff -> 更改DOM
 
 - 实现：将受到的watcher实例添加到队列中，缓存起来，在添加到队列时检查是否已经存在相同的watcher，如果不存在才将watcher实例添加到队列中。在下一次事件循环中，会将队列里的watcher依次触发，并清空队列。

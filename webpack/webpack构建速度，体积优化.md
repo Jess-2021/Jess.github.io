@@ -53,3 +53,5 @@
 ### 动态polyfill
 - babel-polyfill。
 - polyfill-service。通过UA拿到引擎，动态下发polyfill。
+
+![](/image/webpack.png)
