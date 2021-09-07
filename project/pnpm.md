@@ -3,10 +3,11 @@
 - npm、yarn
 
   - 嵌套管理到扁平管理，避免了一个项目内包的重复安装问题。
+  - 项目结构混乱。
 
 - pnpm
 
-  - 将包中的node_modules的依赖和本包放在了同个node_modules上，这时根目录上的node_module就会和package.json的依赖基本保持一致
+  - 将包中的node_modules的依赖和本包放在了同个node_modules上，这时根目录上的node_module就会和package.json的依赖基本保持一致。
 
   - 高效的磁盘利用。基于内容寻址，即使是包的不同版本，也会利用好没有改动的文件，去新增新添加的问题；
 
