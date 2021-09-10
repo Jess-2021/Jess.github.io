@@ -44,3 +44,16 @@
 
 ## 总结：
 ![](https://user-gold-cdn.xitu.io/2019/12/30/16f5477372d2bee3?imageView2/0/w/1280/h/960/format/webp/ignore-error/1)
+
+## css样式隔离
+- BEM命名，被动。
+- css module
+```JS
+import styles from './index.module.css';
+
+function render() {
+  return <div className={styles.main}>Hello world!</div>;
+}
+```
+- styled components CSS in JS
+- shadow DOM
