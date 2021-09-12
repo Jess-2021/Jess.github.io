@@ -44,6 +44,7 @@
   - TRACE.回显服务器收到的请求。已移除
 
 ## 响应码分类
+- 如果客户端收到了不认识的响应码，会按系列的第一个响应码进行处理。
 ## 1xx。服务器接收到了，需要做进一步操作。
 - 100 continue：上传大文件前使用。
 - 101 switch protocols：协议升级使用。客户端发起请求中携带upgrade头部触发，升级websocket或者http2.0
@@ -57,6 +58,7 @@
 - 206 partial content。range协议时返回部分响应内容的响应码。
 
 ## 3XX 重定向使用location指向缓存中的资源。并且不超过5次
+- 300 multiple choices  提供多种选择给到客户端选择
 - 301 move permanently.永久性重定向
 - 302 found，临时重定向到另一个URI中
 - 303 see other:重定向到其他资源。post / put方法
@@ -79,4 +81,43 @@
 - 503 service unavailable 服务器资源尚未处理好当前请求。
 - 504 gateway timeout：代理服务器无法及时从上游获取响应，超时
 
-## 如果客户端收到了不认识的响应码，会按系列的第一个响应码进行处理。
+## 长连接 Connection：keep-alive
+- 为了避免老的代理服务器识别不了connection，会使用proxy-connection代替。
+
+## 请求和响应的上下文 - referer,server,host
+- referer
+  - 浏览器对于来自某一个页面请求自动添加的头部。当来源是本地文件file,data URI时；当前请求页面是http，来源页面是https时。
+  - 通常用于统计分析，缓存优化，防盗链（图片，资源不希望被某些浏览器引用）
+- form
+  - 网络爬虫
+- server
+  - 服务器所用软件的信息
+
+## 内容协商和资源表述 - [accept,content]type，encoding，
+- 接受内容协商
+  - accept（资源类型），accept-language（表述语言），accept-encoding（内容编码）等
+- 资源表述
+  - content-type（资源类型），content-encoding（资源压缩）
+
+## HTTP包体 - content-length，transfer-encoding
+- 当服务端能确定包体的全部长度时：
+  - content-length：字节长度必须与实际传输的字节长度一致。接收端处理也相对简单
+- 当不能确定包体的全部长度时，使用transfer-encoding表示头部content-length应该被忽略。
+  - transfer-encoding：chunk。
+  - 有利于长连接持续推送动态内容。
+  - 有利于边发送边压缩
+  - 必须再发送完成时才返回头部
+
+## form表单的多种资源表述 - content-type：multipart/form-data
+- 可能会有不同资源类型的格式，字节流
+
+## 多线程，断点续传，随机点播 - accept-range
+- 客户端明确任务从哪里开始下载（确定是否有已下载的文件，已下载的文件是否再服务端发生改变，使用几个线程并发下载），然后下载文件的指定部分，最后拼装成统一的文件。
+- ## 条件请求：if-range：[e-tag | last-modified] | http-date
+- ## 服务端响应：
+  - 206 partial content：
+    - content-range显示当前包体在完整包体中的位置。
+  - 416 range not satisfiable:
+    - 请求范围不满足实际资源的大小
+- ## 多重范围 - content-type：multipart/byteranges
+
