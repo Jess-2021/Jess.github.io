@@ -121,3 +121,68 @@
     - 请求范围不满足实际资源的大小
 - ## 多重范围 - content-type：multipart/byteranges
 
+## cookie
+- https会同时加密cookie
+- ## 第三方cookie的原理
+  - 在浏览器访问了某个网站后，可能会存在由其他网站引入的图片，就需要去下载资源（涉及到跨域），这时图片所在的服务器就可以在返回图片的同时加上set-cookie字段。这时就可以拿到用户访问了某个网址了。
+
+## 同源策略
+- 目的： 防止不同站点访问其他站点的cookie信息
+- 可用性和安全性下找到平衡点：
+  - 可用性：
+    - script，img，iframe，link等带有src可以跨站点访问。
+    - 允许跨域写操作，表单提交，重定向请求
+  - 安全性：浏览器需要防止站点A向站点B发起危险动作
+    - cookie，localstorage，indexDB
+    - DOM无法获得
+    - ajax不能发送
+- CSRF攻击：
+  - 通过referer判断是否是安全的域名。可能服务器不规范，没有referer字段。
+  - 在get拉取表单HTML时，服务器返回csrf token，在用户发起提交时自动添加上token。
+
+## CORS
+- 如果站点A允许站点B的脚本访问其资源，必须在HTTP响应中显式告诉浏览器，站点B是被允许的。
+- 简单请求：
+  - GET,HEAD,POST
+  - 头部仅有：Accept，accept-language，content-language，content-type
+  - content-type只能是text/plain，multipart/form-data，application/x-www-form-urlencoded
+- 复杂请求：
+  - 需要先发起预检请求（OPTIONS）询问该请求是否被允许，询问是否支持该方法，头部。
+
+## 条件请求
+- 资源随着时间而变化，需要进行内容协商。由客户端提供条件判断，服务器执行条件判断。
+- 应用: 缓存更新，断电续传，多个客户端同时修改一个资源时（通过校验修改时间或者etag来判断是否时最新的版本）。
+- 验证器：弱验证器（允许一定程度的变化），强验证器
+
+## 缓存
+- 共享缓存，私有缓存
+- 实现：
+  - 通过字典快速找到缓存存放的key（一般是由schema,path,host组成），然后响应通过双向链表来存储，如果不使用的就淘汰掉。
+- ## 缓存新鲜度
+- is_flash = freshness_lifetime > current_age
+  - freshness_lifetime的优先级:s-message(共享缓存的时间) > max-age > expires
+  - urrent_age = age。「自源服务器发出响应，到使用缓存响应发出时经过的秒数。」
+- ## cache-control
+  - 请求中的值
+  - 响应中的值
+  - no-cache:使用前必须到源服务器验证得到304之后才能使用。
+  - private：不能被代理服务器缓存。
+  - no-store:不能对响应进行缓存
+
+- vary：设置进一步过滤的缓存策略
+
+- ## 验证请求
+  - last-modified: if-unmodified-since, if-modified-since,if-range
+  - etag：if-none-match,if-match,if-range
+
+## 重定向
+- 临时重定向不能被缓存
+
+## HTTP tunnel隧道 - 传递SSL消息
+- 使用HTTP链接传输非HTTP协议格式的消息，不受应答模式限制。
+
+## 网络爬虫
+- 通过程序模拟人浏览网页的模式，递归访问web页面里的所有链接。
+- SEO。title，keyword，sitemap来进行优化SEO查询。
+- 可以通过robot.txt来限制那些目录不能访问。
+
