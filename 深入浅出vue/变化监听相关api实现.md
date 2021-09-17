@@ -11,7 +11,7 @@ class Watcher {
     if (typeof expOrFn === 'function') {
       this.getter = expOrFn
     } else {
-      this.getter = parsePath(expOrFn) // 获取到对象深层的值， exp：Jarar.name.firstName
+      this.getter = parsePath(expOrFn) // 获取到对象深层的值， exp：Jarar.name.firstName+
     }
     this.vm = vm
     this.cb = cb
