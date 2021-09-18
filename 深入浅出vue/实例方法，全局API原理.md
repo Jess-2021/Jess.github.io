@@ -152,7 +152,7 @@ export function nextTick(cb, ctx) {
     ### - 如何通过template转化为render？
       1. 合并option。
       2. 检查缓存中是否有存在编译后的模板。
-      3. 调用compile函数编译模板，转化为```with(this){ return _c... }```
+      3. 调用compile函数编译模板，转化为`with(this){ return _c... }`
       4. 调用new Function(code)即可。
   ## 只包含运行时版本的vm.$mount
   - 同样是找到挂载的元素，运行时会开启watcher，在数据变化后，渲染到指定的DOM元素中。
