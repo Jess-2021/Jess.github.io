@@ -1,9 +1,9 @@
 # webpack - Compiler
-- webpack是基于事件流的编程范式，一系列插件通过hooks的方式进行运行。
+- webpack是基于事件流「发布订阅」的编程范式，一系列插件通过hooks的方式进行运行。
 
 ## Tapable插件架构和hooks
--  compiler，继承于Tapable。
-- tapable主要用来控制「钩子函数」的发布订阅，控制着webpack的插件系统。
+-  compiler，继承于Tapable的一系列钩子特性，来定义自己的钩子。
+- 然后，plugin，loader通过监听相应的compiler或者compilation来执行相应的逻辑。
 
 ## 钩子种类
 - syncHook。同步钩子，同步方法。
