@@ -1,4 +1,4 @@
-// 双层循环遍历所有不重复的情况
+// * 双层循环遍历所有不重复的情况
 function doubleIteration(length) {
   for(let i = 0; i < length; i++) {
     for(let j = i + 1; j <= length; j++){
@@ -16,7 +16,7 @@ function doubleIteration(length) {
   2 3
 **/
 
-// 两边往中间遍历
+// * 两边往中间遍历
 function closeIteration(length) {
   for(let i = 0, j = length; i <= j;) {
     if (i === j) return console.log(i) // 需要处理相等的情况
@@ -31,14 +31,14 @@ closeIteration(6)
   3
  */
 
-// 交换两数 - 斜杆交换
+// * 交换两数 - 斜杆交换
 function exchangeNum(x, y) {
   let mid = x
   x = y
   y = mid
 }
 
-// 双指针
+// * 双指针
 
 // 目的: 降低时间复杂度,例如:O(n^2) => O(n)
 // ! 特点: 需要当前指针和遍历到的指针做判断或者其他操作
@@ -50,5 +50,17 @@ function doublePoint(arr) {
     arr[i]
     // 2. 满足某种条件后idx双指针++
     idx++
+  }
+}
+
+// * 在迭代中改变迭代条件
+function iterationMutation() {
+  while(arr.length) {
+    let leng = arr.length
+    for(let i = 0; i < leng; ++i) { // 先++后取值，在下一次循环在进行该次添加的操作
+      // ...
+
+      arr.push(some) // 改变当前的循环条件
+    }
   }
 }

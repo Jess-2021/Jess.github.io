@@ -1,24 +1,14 @@
 // 1. 深度优先
 let visited = []
-// function dfs(node, visited) {
-//   visited.push(node)
-//   for(next in node.children) {
-//     if (!visited.some(item => item === next)) {
-//       dfs(node.children, visited)
-//     }
-//   }
-// }
+function dfs(node, visited) {
+  visited.push(node)
+  for(next in node.children) {
+    if (!visited.some(item => item === next)) {
+      dfs(node.children, visited)
+    }
+  }
+}
 
-
-// // 类似递归的写法
-// function dfs(node, visited) {
-//   if (visited.some(item => item === node)) return
-//   visited.push(node)
-
-//   for(next in node.children) {
-//     dfs(node.children, visited)
-//   }
-// }
 
 var obj = {
   val: 0,
