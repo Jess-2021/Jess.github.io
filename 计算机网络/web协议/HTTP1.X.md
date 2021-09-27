@@ -83,6 +83,9 @@
 
 ## 长连接 Connection：keep-alive
 - 为了避免老的代理服务器识别不了connection，会使用proxy-connection代替。
+- 断开时机：
+  - 当`content-length`没结束或者`transfer-encoding： chunked`时，就会一直接受数据，直到服务端主动断开连接。
+  - 当客户端开启`keep-alive`时，服务端会有一个「最大等待时间」配置，当超过时，会强制`connection：close`
 
 ## 请求和响应的上下文 - referer,server,host
 - referer
