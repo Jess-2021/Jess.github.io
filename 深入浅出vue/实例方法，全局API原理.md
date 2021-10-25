@@ -147,7 +147,7 @@ export function nextTick(cb, ctx) {
   ```
   ### 2. 通过el获取DOM元素
   - el参数支持元素类型或者字符串类型选择器。如果获取不到创建一个空的div元素。
-  ### 3. 编译器 
+  ### 3. 编译器
   - 实例中是否存在渲染函数，不存在时，将模板编译成渲染函数，并设置到this.$option。
     ### - 如何通过template转化为render？
       1. 合并option。

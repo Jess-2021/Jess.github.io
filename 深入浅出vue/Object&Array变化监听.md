@@ -6,11 +6,11 @@
 
 ## 2. 如何追踪变化：
 
-  - 通过Object.defineProperty上添加属性改变时和访问时的钩子。在getter中收集相应的依赖，收集到的也就是「Dep」。当属性改变时在setter对所有收集到的依赖循环进行相应的操作。
+  - 通过`Object.defineProperty`上添加属性改变时和访问时的钩子。在`getter`中收集相应的依赖，收集到的也就是`「Dep」`。当属性改变时在`setter`对所有收集到的依赖循环进行相应的操作。
 
   - 依赖其实有很多，模板，watch。。。
 
-  - vm.$watch，在创建一个watch时，会以watcher的身份调用一次值，这时会调用getter，同时，watcher也会被收集到。
+  - `vm.$watch`，在创建一个watch时，会以watcher的身份调用一次值，这时会调用getter，同时，watcher也会被收集到。
 
   - 对于对象，需要对所有的属性「data」，进行设置getter和setter，「class Observer」会对所有的属性转化为getter/setter形式，这时就生成我们说的「响应式对象」。
 
@@ -18,7 +18,7 @@
 
 ## 3. 如何收集依赖：
   - 通过getter收集依赖，在setter触发依赖。
-  - 在data的数据里会保存一份「dep」，通过getter将收集到的依赖存放到dep里。setter触发时通知收集到的依赖，做相应的变化。
+  - 在data的数据里会保存一份该组件的`「dep」`，通过getter将收集到的依赖存放到dep里。setter触发时通知收集到的依赖，做相应的变化。
 
   - 问题：收集到的依赖可能会有多种类型，template，watcher等。不好通知。「可以通过设置一个中介，在平时只通知到一个，中介再通知其他地方」
 ```JS
