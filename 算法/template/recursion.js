@@ -1,3 +1,5 @@
+// 递归，同回溯
+
 function recursion(level, param1, param2) {
   // 1. 递归终结者
   if (level > MAX_LEVEL) {
