@@ -1,8 +1,6 @@
 # 解决什么问题？
 - 获得及时更新，轮询 -> 通知
 
-# 约束：
-
 ## 成本: - 相比于HTTP1
 - 实时性和可伸缩性 -> 牺牲了简单性，不利于层级的扩展：负载均衡
 
@@ -10,9 +8,9 @@
 - 基于帧，不是基于流，要么承载字符数据，要么承载二进制数据。
 
 ## 流程：
-1. 发起一个http/1.1，并带上header - upgrade:websocket，sec-websocket-key：随机数
-  - 通过sec-websocket-key表示握手被服务器接受。
-2. 服务器返回101状态码，web socket protocol handshake，并生成一段新的随机数通过sec-websocket-accept返回。
+1. 发起一个http/1.1，并带上header - `upgrade:websocket，sec-websocket-key：随机数`
+  - 通过`sec-websocket-key`表示握手被服务器接受。
+2. 服务器返回`101状态码，web socket protocol handshake`，并生成一段新的随机数通过`sec-websocket-accept`返回。
 3. 然后，websocket通过帧（多个同类型的帧合并成一个消息）进行传输，当收到关闭帧时进行关闭。
 4. 当tcp进行关闭时才表示websocket已经关闭。
 

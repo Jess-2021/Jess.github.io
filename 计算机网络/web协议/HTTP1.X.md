@@ -30,7 +30,6 @@
   - % + 两个16进制的字符。
   - 中文用utf-8，在使用US-ASCII
 
-
 ## HTTP请求头
 
 - 常见方法：
@@ -48,12 +47,12 @@
 ## 1xx。服务器接收到了，需要做进一步操作。
 - `100 continue`：上传大文件前使用。
 - `101 switch protocols`：协议升级使用。客户端发起请求中携带`upgrade`头部触发，升级`websocket`或者`http2.0`
-- `102 Processing`. webDAV请求或者涉及文件操作的子请求。表示服务器已收到请求，但需要经过长时间操作才能完成。类似TCP断开时的`close-wait2环`节。为了防止客户端超时，
+- `102 Processing`. webDAV请求或者涉及文件操作的子请求。表示服务器已收到请求，但需要经过长时间操作才能完成。类似TCP断开时的`close-wait2`环节。为了防止客户端超时，
 
 ## 2XX成功。处理请求
 - `201 created`。服务端有新资源被创建。例如：put请求
 - `202 accepted`。服务器接受到请求，但未处理完成。例如：异步，需要长时间处理的任务。
-- `204 no content`。成功执行请求但不携带响应体，PUT请求。不需要更新视图
+- `204 no content`。成功执行请求但不携带响应体，PUT请求。不需要更新视图·  、
 - `205 reset content`。成功执行请求但不携带响应体，PUT请求。需要更新视图。
 - `206 partial content`。range协议时返回部分响应内容的响应码。
 
@@ -133,10 +132,10 @@
 - 目的： 防止不同站点访问其他站点的cookie信息
 - 可用性和安全性下找到平衡点：
   - 可用性：
-    - script，img，iframe，link等带有src可以跨站点访问。
+    - script，img，iframe，link等「带有src」可以跨站点访问。
     - 允许跨域写操作，表单提交，重定向请求
   - 安全性：浏览器需要防止站点A向站点B发起危险动作
-    - cookie，localstorage，indexDB
+    - cookie，localStorage，indexDB
     - DOM无法获得
     - ajax不能发送
 - CSRF攻击：
@@ -161,22 +160,24 @@
 - 共享缓存，私有缓存
 - 实现：
   - 通过字典快速找到缓存存放的key（一般是由schema,path,host组成），然后响应通过双向链表来存储，如果不使用的就淘汰掉。
+
 - ## 缓存新鲜度
 - is_flash = freshness_lifetime > current_age
-  - freshness_lifetime的优先级:s-message(共享缓存的时间) > max-age > expires
-  - urrent_age = age。「自源服务器发出响应，到使用缓存响应发出时经过的秒数。」
+  - freshness_lifetime的优先级: s-message(共享缓存的时间) > max-age > expires
+  - current_age = age。「自源服务器发出响应，到使用缓存响应发出时经过的秒数。」
+
 - ## cache-control
   - 请求中的值
   - 响应中的值
-  - no-cache:使用前必须到源服务器验证得到304之后才能使用。
-  - private：不能被代理服务器缓存。
-  - no-store:不能对响应进行缓存
+  - `no-cache`:使用前必须到源服务器验证得到304之后才能使用。
+  - `private`：不能被代理服务器缓存。
+  - `no-store`:不能对响应进行缓存
 
 - vary：设置进一步过滤的缓存策略
 
 - ## 验证请求
   - last-modified: if-unmodified-since, if-modified-since,if-range
-  - etag：if-none-match,if-match,if-range
+  - e-tag：if-none-match,if-match,if-range
 
 ## 重定向
 - 临时重定向不能被缓存
