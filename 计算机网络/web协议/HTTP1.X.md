@@ -62,6 +62,8 @@
 - `302 found`，临时重定向到另一个URI中
 - `303 see other`:重定向到其他资源。post / put方法
 - `304 not modified` 可以利用缓存
+- `307 Temporary Redirect`， 一样是临时重定向。在向新的地址发送请求时，请求方法和消息主体不变。
+- `308 Permanent redirect`。永久重定向，请求方法和消息主体不变。
 
 ## 4XX 客户端出现错误
 - `400 bad request`：客户端出现错误。例如HTTP请求格式错误
