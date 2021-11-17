@@ -1,11 +1,19 @@
 # vite
+
+## 特点：
 - 项目完全由esModule组成。
+- 依赖预构建：
+  - 将所有的代码视为原生ES模块。会将CJS或者UMD转化成ESM。
+  - 将内部的依赖关系转换为单个模块。合并请求（通过HTTP来获得包源码）
 - common.js模块不能直接应用在vite上。
 - 打包还是用rollup等传统打包。
+- 构建优化:
+  - CSS代码分割。会将异步模块里的CSS抽离成一个单独的文件。会在chunk加载完成时通过`link`引入，该chunk会在css加载完成后执行。
+  - 预加载指令生成。`modulepreload`
+  - 递归解析依赖，以减少「网络往返」
 
 ## 原理：
-- 主要问题：
-- 解决import JS文件问题。在服务器通过拿到import的相对路径，然后返回相应的文件内容。
+- 解决import JS文件问题。在服务器通过拿到import的相对路径，然后返回相应的文件内容。 - 自动依赖搜寻
 - 解决第三方库引入问题。需要协商好link。例如：
 ```JS
 import vue from "/@modules/vue"
@@ -33,3 +41,6 @@ import vue from "/@modules/vue"
 - 优点： 内置了css，react，ts等支持，编译速度极快。
 - 缺点： 生态简单。
 
+## 插件编写
+- 返回一个插件对象的options工厂函数。
+- 同时有一些rollup和vite的不同钩子
