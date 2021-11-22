@@ -27,7 +27,7 @@ import vue from "/@modules/vue"
   - webpack生态相对成熟。
   - webpack强调于web开发支持，内置了HMR的支持，插件系统比较强大。
 ## 缺点：
-  - 但产物不支持esm模式，同时有多余的东西，但也导致了难以使用问题，无论是编写插件还是。
+  - 但产物不支持esm模式，同时产物有多余的东西，但也导致了难以使用问题，无论是编写插件还是。
 
 ## rollup
 ## 优点：
@@ -44,3 +44,10 @@ import vue from "/@modules/vue"
 ## 插件编写
 - 返回一个插件对象的options工厂函数。
 - 同时有一些rollup和vite的不同钩子
+
+- vite遇到的问题:
+1. 不支持`require`,只能使用ESM。「强制在预构建中加入某个包，然后`@rollup/plugin-commonjs`导入包。或者不用~」
+2. 自定义插件。需要在解析vite配置时，判断mode，往HTML注入相应的`preload`。「插件机制」
+3. 会遇到有些包暴露了`非JS`的文件。
+4. 导入的文件忽略扩展名。添加到扩展名列表。
+5. 不执行类型检查，只是做了对TS到JS的转译。

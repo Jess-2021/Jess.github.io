@@ -41,18 +41,18 @@
 - 存储型和反射型都需要经过web服务器处理。但DOM的XSS是浏览器端的漏洞。
 - XSS攻击都需要给浏览器「注入恶意脚本」，然后通过恶意脚本将用户信息「发送至恶意服务器」。
 
-- 策略
-  - 服务器对输入脚本进行「过滤」或者「转码」。对关键字符进行转换，例如：转换或者过滤`<script>`里的内容。
-  - 充分利用CSP。（重要）
+- 策略:
+  1. 服务器对输入脚本进行「过滤」或者「转码」。对关键字符进行转换，例如：转换或者过滤`<script>`里的内容。
+  2. 充分利用CSP。（重要）
     - 限制加载其他域下的资源文件。JS文件
     - 禁止第三方域提交信息。
     - 禁止执行内联脚本和未授权脚本。
     - 提供上报功能。
-  - 比较重要的数据设置「HttpOnly」属性。很多脚本都是盗用用户的登录凭证。设置了HttpOnly，标志Cookie只能使用在Http请求过程。无法通过JS拿到。
+  3. 比较重要的数据设置`HttpOnly`属性。很多脚本都是盗用用户的登录凭证。设置了`HttpOnly`，标志Cookie只能使用在Http请求过程。无法通过JS拿到。
   ```
   set-cookie: NID=189=M8q2FtWbsR8RlcldPVt7qkrqR38LmFY9jUxkKo3-4Bi6Qu_ocNOat7nkYZUTzolHjFnwBw0izgsATSI7TZyiiiaV94qGh-BzEYsNVa7TZmjAYTxYTOM9L_-0CN9ipL6cXi8l6-z41asXtm2uEwcOC5oh9djkffOMhWqQrlnCtOI; expires=Sat, 18-Apr-2020 06:52:22 GMT; path=/; domain=.google.com; HttpOnly
   ```
-  - 添加验证码。限制输入长度等。
+  4. 添加验证码。限制输入长度等。
 
 # CSRF攻击 - 跨站请求伪造
 - 定义：黑客利用了用户的登录状态，通过第三方恶意网站来做恶意操作。
@@ -94,17 +94,17 @@
   ```
 
 ## 策略：
-- Cookie的「sameSite」属性。利用Cookie做用户登录凭证的站点。
+1. Cookie的`sameSite`属性。利用Cookie做用户登录凭证的站点。
   - strict。浏览器完全禁止第三方的Cookie。
   - Lax。跨站点下，第三方站点打开get请求，都会携带Cookie。post或者img，iframe都不会带上。
   - none。都带上
 ```
 set-cookie: 1P_JAR=2019-10-20-06; expires=Tue, 19-Nov-2019 06:36:21 GMT; path=/; domain=.google.com; SameSite=none
 ```
-- 验证请求的来源站点。服务端通过Referer或者Origin验证请求来源站点。
+2. 验证请求的来源站点。服务端通过`Referer`或者`Origin`验证请求来源站点。
   - Referer记录HTTP请求的来源地址，包括整个pathname。
   - Origin。包含域名信息。
-- CSRF token。
+3. CSRF token。
   - 浏览器向服务器发送请求时，服务器生成一个「CSRF token。植入到返回的页面中」。
   - 浏览器如果「发起较为关键的请求」时，需要带上token。然后服务器判断是否正确。
   - 不同的tab页生成的token也不同。

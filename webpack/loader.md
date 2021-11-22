@@ -22,3 +22,13 @@ compose = (f,g) => (...args) => f(g(...args))
 - 接受一个表示模块文件内容的source。
 - 使用一系列的api对source进行转换，得到一个result。
 - 将result传递给下一个loader，知道处理完毕。
+
+# 常用loader
+
+## babel-loader
+- 模块解析，`cacheDirectory`开启babel缓存。
+
+## image-webpack-loader
+- 在选项中选中哪个图片处理库，将他们require，并处理，图片压缩。
+  -`pngquant`或者`tinypng`，将24/32位文件转化为8位png。
+  - `optipng`，调高压缩级别。调整图片尺寸。
