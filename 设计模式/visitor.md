@@ -15,7 +15,6 @@
 abstract class Visitor {
   abstract visit(element) => void
 }
-
 // 抽象元素
 abstract class Element {
   abstract accept(visitor) => void
@@ -26,7 +25,6 @@ class xxxVisit extends Visitor {
   constructor() {
     super()
   }
-
   visit(element) {
     element.doSomething()
   }
@@ -37,11 +35,9 @@ class xxxElement extends Element {
   constructor() {
     super()
   }
-
   accept(visitor) {
     visitor.visit(this)
   }
-
   doSomething() {
     // 本身逻辑
   }
