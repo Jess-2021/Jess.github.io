@@ -1,3 +1,16 @@
+# 执行上下文 - 执行的基础设施
+
+- 定义：JS标准中，将一段代码（包括函数），执行所需的所有信息。
+- ES2018中，this 被归入 lexical environment ，并且添加了不少内容
+
+  - lexical environment：词法环境，当获取变量或者 this 值时使用。
+  - variable environment：变量环境，当声明变量时使用
+  - code evaluation state：用于恢复代码执行位置。
+  - Function：执行的任务是函数时使用，表示正在被执行的函数。
+  - ScriptOrModule：执行的任务是脚本或者模块时使用，表示正在被执行的代码。
+  - Realm：使用的基础库和内置对象实例。
+  - Generator：仅生成器上下文有这个属性，表示当前生成器。
+
 # 变量提升
 
 - js开始执行的时候，会先对程序进行编译，其中会生成执行上下文和可执行代码。
@@ -6,30 +19,32 @@
 
 - 在生成的执行上下文中，会生成变量环境和词法环境。
 
-    * 生成变量环境中，会对`var`定义的，或者全局变量和函数声明提升到开头，并将变量设置为默认值。
-    ```JS
-    // 程序
-    var showName = function() {}
-    var myName = 'Jararvis'
-    if (0) var myName2 = 'Jarvis'
-    function showName2() {
-        console.log('showName被调用');
-    }
+  - 生成变量环境中，会对`var`定义的，或者全局变量和函数声明提升到开头，并将变量设置为默认值。
+  ```JS
+  // 程序
+  var showName = function() {}
+  var myName = 'Jararvis'
+  if (0) var myName2 = 'Jarvis'
+  function showName2() {
+      console.log('showName被调用');
+  }
 
-    // 变量提升部分
-    var showName = undefined // 把函数showName提升到开头
-    var myname = undefined
-    var myName2 = undefined
-    function showName2 = function() {
-        console.log('showName被调用');
-    }
+  // 变量提升部分
+  var showName = undefined // 把函数showName提升到开头
+  var myname = undefined
+  var myName2 = undefined
+  function showName2 = function() {
+      console.log('showName被调用');
+  }
 
-    // 可执行部分
-    showName = function() {}
-    myName = 'Jararvis'
-    ```
-    * 其中，函数的处理是，在变量中存储的是函数的地址。JS引擎发现了一个函数，会先将函数定义存储到堆（HEAP）中，并在环境对象中创建一个函数名属性，例如：showName，然后将该key指向Heap中的地址。
-    * 其中，当函数和变量同名时，函数优先。
+  // 可执行部分
+  showName = function() {}
+  myName = 'Jararvis'
+  ```
+  - 其中，函数的处理是，在变量中存储的是函数的地址。JS引擎发现了一个函数，会先将函数定义存储到堆（HEAP）中，并在环境对象中创建一个函数名属性，例如：showName，然后将该key指向Heap中的地址。
+  - 其中，当函数和变量同名时，函数优先。
+
+- 在ES6之前，可以通过IIFE来模拟块级作用域，构造一个函数的执行环境
 
 # 调用栈（管理多个执行上下文）
 - 程序执行的时候，会生成一个调用栈，里面包含有各个函数的执行上下文（见变量提升图），包括全局执行上下文，在一个函数执行完毕后上下文才会被销毁。（eval函数中，代码也会被编译，并创建执行上下文。）
@@ -89,6 +104,15 @@ foo()
 函数包含关系中，一个函数块就是一个词法作用域，所以该例子中  作用域也有包含的关系。
 
 # 闭包
+
+- 定义包含两个部分：
+  - 环境部分
+    - 环境 -> 函数的词法环境（执行上下文的一部分）
+    - 标识符列表 -> 函数中用到的未声明的变量
+  - 表达式部分 -> 函数体
+
+- 与普通函数的区别：闭包是绑定了执行环境的函数，本质还是一个函数。
+
 - 依据词法作用域的规则，内部函数总是可以访问到外部函数的变量。
 
 - 如果保留了内部函数的引用，这些变量（包括词法环境和变量环境的值都会被保存到内存中，直到引用闭包的函数销毁，变量才会在下一次的垃圾回收中被销毁。）
@@ -148,3 +172,17 @@ var name = undefined;
     ```
     * 默认指向全局变量window。
 
+# realm
+- 用来区分不同window环境下的对象原型
+``` JS
+var iframe = document.createElement('iframe')
+document.documentElement.appendChild(iframe)
+iframe.src="javascript:var b = {};"
+ 
+var b1 = iframe.contentWindow.b;
+var b2 = {};
+ 
+console.log(typeof b1, typeof b2); //object object
+ 
+console.log(b1 instanceof Object, b2 instanceof Object); //false true
+```
