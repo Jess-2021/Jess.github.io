@@ -136,29 +136,33 @@ var name = undefined;
 3. foo函数调用：
 
     1). myName存入到变量环境，同时在变量环境中包含了外部的执行上下文，也就是全局执行上下文。
-    
+
     2). 将``` test = 2``` 存入到词法环境。到{}代码块，``` test = 3``` push到词法环境栈中。
 
     3). 调用foo。
 
 4. ``` myName = '极客世界' ```存入到变量环境，并加上外部执行作用域。``` test1 = 100``` 推入词法环境栈，同理，```myName = 'Chrome浏览器'```推入。
 
-# this
-- 为了让对象内部的方法能使用对象内部的属性，所以出现了this机制。
+# this - 调用它所使用的引用
+
+- 意义：为了让对象内部的方法能使用对象内部的属性，所以出现了this机制。
 
 - 他和作用域链是完全不同的两套系统，又和执行上下文绑定在一起。
+## 原理：我们获取的函数表达式，实际上返回的并非函数本身，而是一个 Reference 类型。
+- Reference 类型由两部分组成：对象和属性值
+- 当做一些算数运算，reference类型才会被解引用，并获取到真正的值。例如：函数调用，delete操作等
 
 ![](https://static001.geekbang.org/resource/image/b3/8d/b398610fd8060b381d33afc9b86f988d.png)
 
 - 包括全局执行上下文中的this - window对象，函数执行上下文，eval中的this；
 
 - 函数执行上下文的this
-    * call设置；
-    * 通过对象调用，例如：myObj.say(), this为myObj；say()，this为window
-    * 构造函数中，this指向传入的参数；
+  - call设置；
+  - 通过对象调用，例如：myObj.say(), this为myObj；say()，this为window
+  - 构造函数中，this指向传入的参数；
 
 - this缺陷
-    * 嵌套函数中，this不能从外部函数中继承，一般通过变量self定义this，或者箭头函数（不会创建自身的执行上下文）。
+  - 嵌套函数中，this不能从外部函数中继承，一般通过变量self定义this，或者箭头函数（不会创建自身的执行上下文）。
     ```JS
     var myObj = {
     name : "极客时间", 
@@ -170,7 +174,17 @@ var name = undefined;
     }
     myObj.showThis() // '极客时间'， 'window'
     ```
-    * 默认指向全局变量window。
+  - 默认指向全局变量window。
+
+## this关键字的机制
+
+- 函数能够记住定义时的变量，JS标准中规定了用来保存定义时上下文的私有属性 [[Environment]]，当一个函数执行时，会创建一条新的执行环境记录，记录的外层词法环境（outer lexical environment）会被设置成函数的 [[Environment]]。即为切换上下文。
+- 而 this 是一个更复杂的机制，JavaScript 标准定义了 [[thisMode]] 私有属性。并可能有三个取值：
+  - lexical：表示从上下文中找 this，这对应了箭头函数。
+  - global：表示当 this 为 undefined 时，取全局对象，对应了普通函数。
+  - strict：当严格模式时使用，this 严格按照调用时传入的值，可能为 null 或者 undefined。
+- 函数创建新的执行上下文时，会根据 [[thisMode]] 来标记新记录的 [[ThisBindingStatus]] 私有属性。
+- 在代码遇到this时，会逐层检查当前此法环境记录中的 [[ThisBindingStatus]] ，找到有this环境记录的获取this值。
 
 # realm
 - 用来区分不同window环境下的对象原型
@@ -178,11 +192,10 @@ var name = undefined;
 var iframe = document.createElement('iframe')
 document.documentElement.appendChild(iframe)
 iframe.src="javascript:var b = {};"
- 
+
 var b1 = iframe.contentWindow.b;
 var b2 = {};
- 
+
 console.log(typeof b1, typeof b2); //object object
- 
 console.log(b1 instanceof Object, b2 instanceof Object); //false true
 ```
