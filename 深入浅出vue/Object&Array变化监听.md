@@ -61,7 +61,7 @@ function defineReactive(data, key, val) {
   })
 }
 ```
-## 4. 依赖是谁? - watcher
+## 4. 谁使用了响应式数据? - watcher
 - 数据变化了，通过watcher，watcher再执行收集到依赖中的的回调函数。「其实也就是一个依赖，所以将watcher加入Dep里就可以了」。
 - 实现：将一个外部的对象调用一下data的数据，就能触发收集，最后再清除。（类似寄生继承）
 - 初始化时包括了对vm._watcher的处理。实例上有一个watcher，会监听这个组件中的所有状态，组件里用到的所有状态的依赖列表都会收集到vm._watcher中。状态变化时，会通知vm._watcher,然后它vW在调用DOM进行重新渲染。
@@ -195,3 +195,11 @@ ob.dep.notify() // 向依赖发送通知
   - 数组中新增的元素可能会有数组，所以需要对数组中每一项进行递归的observe响应式处理；
   - 如果是新增数组时，即「push、splice、unshift」都需要对新增的数组进行响应式处理
 - 同时，对数组进行字面量操作的不能被监听到变化。
+
+## 依赖收集整体流程
+- 初始化时，data 里的数据会转化为响应式对象，会为每个对象设置一个实例化的`Dep`，用于管理依赖。
+- 同时，通过`Dep.target`设置一个全局唯一的当前执行的`Watcher`。
+- 当属性被访问时，触发`getter`，调用`dep.depend()`，收集当前`watcher`到依赖。
+- 属性修改时，触发`setter`，调用`dep.notify()`，遍历收集到的依赖（`watcher`），并调用每个`watcher`的`update()`，然后回自动完成更新操作。
+
+- 同时，更新时，会有一个`scheduler`的概念，是一个队列，会存放等待被执行的`watcher`，同一个watcher只会放在`nextTick`执行一次。
