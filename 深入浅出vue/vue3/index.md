@@ -1,0 +1,47 @@
+# 解决核心问题 - DOM操作性能过差
+
+## angular
+- 脏检查，每次交互都检查一次数据是否变化，从而去更新DOM。
+
+## vue1.x
+- 响应式，初始化时，watcher监听数据的每个属性，数据变化时修改key去针对DOM变化。
+
+## react
+- 虚拟DOM，diff 检查后去更新。
+
+## vue2.x - 组件级别的响应式
+- 组件之间的变化通过响应式通知更新，内部数据变化则通过虚拟DOM来更新。
+
+# JSX
+- JSX 在vue中最终也是解析为createVnode执行，适合在动态性较高的情况下使用。
+- 相比于 template 会缺少一些优化，template的限制比较多，但是 Vue 对其做了一部分优化。例如：
+  - 静态属性的标记，直接越过 Diff 的过程；
+  - @click 函数也做了一层cache 缓存。
+  - 带冒号的属性是动态属性，因而存在使用一个数字去标记标签的动态情况。也是 Vue3 diff 比vue2 快的原因。
+
+  ```JS
+  import { toDisplayString as _toDisplayString, createElementVNode as _createElementVNode, openBlock as _openBlock, createElementBlock as _createElementBlock } from "vue"
+
+  const _hoisted_1 = { id: "app" }
+  const _hoisted_2 = /*#__PURE__*/_createElementVNode("h1", null, "技术摸鱼", -1 /* HOISTED */)
+  const _hoisted_3 = ["id"]
+  export function render(_ctx, _cache, $props, $setup, $data, $options) {
+    return (_openBlock(), _createElementBlock("div", _hoisted_1, [
+      _createElementVNode("div", {
+        onClick: _cache[0] || (_cache[0] = ()=>_ctx.console.log(_ctx.xx)),
+        name: "hello"
+      }, _toDisplayString(_ctx.name), 1 /* TEXT */),
+      _hoisted_2,
+      _createElementVNode("p", {
+        id: _ctx.name,
+        class: "app"
+      }, "极客时间", 8 /* PROPS */, _hoisted_3)
+    ]))
+  }
+  ```
+
+## vue 做了什么优化 - 遵守 vue 的最佳实践
+- computed 缓存机制，比 watch 更好
+- template 激活vue内置静态标记，跳过diff，代码执行效率也能提高。
+- v-for 要有key，diff 里更高效复用标签。
+
