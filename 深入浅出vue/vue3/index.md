@@ -44,4 +44,16 @@
 - computed 缓存机制，比 watch 更好
 - template 激活vue内置静态标记，跳过diff，代码执行效率也能提高。
 - v-for 要有key，diff 里更高效复用标签。
+- tree shaking，之前全局api都暴露在vue实例上，未被使用也无法被tree shaking。vue3将其api作为ES模块构建导出，从而可以被tree shaking。
+- Vue3 相比于 Vue2 虚拟DOM 上增加 `patchFlag` 字段。
+- 静态属性的标记，直接越过 Diff 的过程；
+- @click 函数也做了一层cache 缓存。
 
+
+## 响应式原理对比
+- vue2无法监听对象或数组新增、删除的元素。
+  - 通过拦截数组方法；
+  - Vue.set 监听对象数组新增属性，new 个新对象，然后将修改过后的对象深拷贝给新对象
+- Vue3
+  - 能拦截对象的行为；但对象的新增和删除，.length的修改，Map、set、weakMap、weakSet的支持解决不了。
+  
