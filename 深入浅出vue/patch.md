@@ -98,5 +98,6 @@
 
 # 如何判定节点是相同的节点
 - key值
+- asyncFactory 是不是异步组件，如果是则通过判断异步组件的占位符否存在 isAsyncPlaceholder
 - tag值
 - 其他边界条件。input等

@@ -42,6 +42,7 @@ function baseCreateRenderer(){
 
 - 返回的 `createApp` 值是调用了 `createAppAPI` ，接受了`render`，和 `hydrate`。
 - 创建一个 app 对象。app 上注册了 use、component 和 mount 等常见方法。
+- 通过 `createVNode` 创建虚拟DOM，并通过 `render` 传递给 `patch` 或者 `unmount` 执行。
 ```JS
 
 export function createAppAPI<HostElement>(
@@ -103,7 +104,7 @@ export function createAppAPI<HostElement>(
 - App是一个组件，需要执行 processComponent ：如果首次渲染，n1 是null，所以执行mountComponent；更新时，n1 是上次的vDom，执行 updateComponent （即是diff的相关逻辑）。
 
 # mountComponent
-- 核心渲染逻辑： setupComponent 、setupRenderEffect
+- 核心渲染逻辑： setupComponent 、setupRenderEffect。执行setup函数，之后将组件里的
 
 ## setupComponent
 - setupComponent：执行 setup 函数。内部先初始化了 props 和 slots，并且执行 setupStatefulComponent 创建组件，而这个函数内部从 component 中获取 setup 属性。
@@ -135,12 +136,14 @@ function setupStatefulComponent(
   // ...
 }
 ```
-## setupRenderEffect：
-  - 组件首次加载会调用 patch 函数去初始化子组件，会递归整个虚拟 DOM 树，然后触发生命周期 mounted，完成这个组件的初始化。
-  - 首次更新后，还注册了组件的更新机制。通过 `ReactiveEffect` 创建了 `effect` 函数。然后执行 `instance.update` 赋值为 `effect.run` 方法，这样结合 `setup` 内部的 ref 和 reactive 绑定的数据，数据修改之后，就会触发 update 方法的执行，内部就会 `componentUpdateFn`，内部进行递归的 patch 调用执行每个组件内部的 update 方法实现组件的更新。
+## setupRenderEffect - 将 instance.update = effect.run
+
+  - 递归整个虚拟 DOM 树，然后触发生命周期 `mounted`，完成这个组件的初始化（组件首次加载时，会调用`patch`）。
+  - 之后，还注册了组件的更新机制。通过 `ReactiveEffect` 创建了 `effect` 函数。然后执行 `instance.update` 赋值为 `effect.run` 方法（ ref 和 reactive 绑定的数据，数据修改之后，就会触发 update 方法的执行）。
   ```JS
   // updateComponent...
 
+  // 内部就会 `componentUpdateFn`，内部进行递归的 patch 调用执行每个组件内部的 update 方法实现组件的更新。
   const effect = new ReactiveEffect(
     componentUpdateFn,
     () => queueJob(instance.update),
