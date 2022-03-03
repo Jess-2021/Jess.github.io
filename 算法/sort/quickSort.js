@@ -5,6 +5,30 @@
   // 时间：平均O(nlog2n)，坏O(n^2)，好O(nlog2n)；
   // 空间：O(n)
 // 稳定
+function quickSort(arr, startIdx, endIdx) {
+  if (startIdx >= endIdx) return
+  let pivot = partition(arr, startIdx, endIdx)
+  quickSort(arr, startIdx, pivot-1)
+  quickSort(arr, pivot + 1, endIdx)
+}
+
+function partition(list, start, end) {
+  let counter = start, pivot = end
+  for(let i = start; i < end; i++) {
+    if (list[i] < list[pivot]) {
+      let prev = list[counter]
+      list[counter] = list[i]
+      list[i] = prev
+      counter++
+    }
+  }
+  let prev = list[counter]
+  list[counter] = list[pivot]
+  list[pivot] = prev
+
+  return counter
+}
+
 
 function quickSort(arr, start, end) {
   if (end <= start) return
