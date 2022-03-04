@@ -1,4 +1,5 @@
-# CJS 由JS社区发起，在Node上得到推广，后续也影响了浏览器端的JS
+# commonJS
+- 由JS社区发起，在Node上得到推广，后续也影响了浏览器端的JS
 
 ## 原因：
 - 脚本变多时，需要手动管理加载顺序
@@ -45,3 +46,37 @@ lib.a //undefined
 ```
 - ps: webpack 对于CJS的实现，`require`会替换掉`module`下面的`exports`引用。但内部还存留着`exports`。
 ![](/image/ed499f52f94469b646e543a3f9c64ef.png)
+
+
+# 内置模块
+
+## 内置模块调用通路：
+- Node应用层级的代码 -> Node 底层库 -> c++底层接口 -> v8接口方法 -> JS变量
+- 通过Node应用层级的代码，调用了Node的底层库，底层库又去调c++底层接口拿到操作系统相关信息，之后通过v8接口方法，回调后转化为JS变量。
+
+## 操作系统 -> Node 应用代码
+- 例如：eventEmitter，(观察者模式)
+  ```JS
+  class Learn extends EventEmitter {
+    constructor() {
+      super()
+      setInterval(() => {
+        // 每3秒触发一次事件，并传入参数
+        this.emit('newLesson', { main: 'Some Front End Lesson' })
+      }, 3000)
+    }
+  }
+
+  const jess = new Learn()
+  jess.addListener('newLesson', (res) => {
+    console.log(res) // Some Front End Lesson
+  })
+  ```
+- 应用：我们就可以不去调用外面的函数的情况下，通过事件监听器就可以在程序执行时注入逻辑。
+```js
+const learn = require('Learn')
+
+jess.addListener('newLesson', (res) => {
+  console.log(res) // Some Front End Lesson
+})
+```
