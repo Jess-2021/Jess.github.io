@@ -44,10 +44,29 @@
 - computed 缓存机制，比 watch 更好
 - template 激活vue内置静态标记，跳过diff，代码执行效率也能提高。
 - v-for 要有key，diff 里更高效复用标签。
-- tree shaking，之前全局api都暴露在vue实例上，未被使用也无法被tree shaking。vue3将其api作为ES模块构建导出，从而可以被tree shaking。
+- `tree shaking`。
+  - new Vue时的，vue2无法对其进行tree-shaking
+  ```js
+  // vue2
+  const app = new Vue({
+    router,
+    store
+    render: h => h(App)
+  })
+  app.$mount('#app')
+
+  // vue3
+  createApp(App).use(router).use(store).mount('#app')
+
+  // 在webpack做tree-shaking时，无法处理动态语言对象上的属性的，而且也无法对这些属性进行优化，比如通过uglify来缩短属性名称
+  ```
+  - API。之前全局api都暴露在vue实例上，未被使用也无法被tree shaking。vue3将其api作为ES模块构建导出，从而可以被tree shaking。
+  - `compiler`中，对于template的解析函数，也是通过 `esm import` 进来的.
+  ![](/image/237ce858e266324cd60c0ee4c67c753.png)
 - Vue3 相比于 Vue2 虚拟DOM 上增加 `patchFlag` 字段。
 - 静态属性的标记，直接越过 Diff 的过程；
-- @click 函数也做了一层cache 缓存。
+- `事件缓存`。@click 函数也做了一层cache 缓存。
+  - vue2中每次更新，render函数跑完之后 vnode绑定的事件都是一个全新生成的function。Vue3中传入的事件会自动生成并缓存一个内联函数在cache里，变为一个静态节点。 - 享元模式
 
 
 ## 响应式原理对比
