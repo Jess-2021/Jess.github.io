@@ -1,33 +1,62 @@
-# webpack构建优化
+# 初步分析 - stats 初略的看打包出来的效果
 
-## 初步分析 - stats 初略的看打包出来的效果
-
-## 构建速度分析 - speed-measure-webpack-plugin
+# 构建速度分析 - speed-measure-webpack-plugin
 - 整个打包的总耗时
 - 每个插件和loader的耗时
 
-## 体积分析 - webpack-bundle-analyzer
+# 体积分析 - webpack-bundle-analyzer
 - 分析依赖的第三方组件大小
 - 业务组件里的组件代码大小
 
 - PS：babel-polyfill
 
-## 多进程，多实例构建：资源并行解析
-- 每次webpack解析一个模块，thead-loader会将他的依赖分配给多个worker线程中执行。
+# 使用高版本的node和webpack
 
-## 多进程，多实例构建：资源并行压缩
-- parallel-ugify-plugin,terser-webpack-plugin并行压缩。
-## dll分包
-- 将多个基础库包装成一个包，减少每个文件的大小。不分析里面基础库的代码，直接抽离出来成一起的一个包。
-- 在externals，或者splitChunks之上进一步进行分包，将多个基础库通过dllPlugin打成一个包。
-- 通过dllPlugin分包，同时在输出HTML文件时，通过dllReferencePlugin通过manifest.json映射到相应的依赖上。
+# 多进程，多实例构建：资源并行`解析` - thead-loader
+- 每次webpack解析一个模块，`thead-loader`会将他的依赖分配给多个worker线程中执行。
 
-## 缓存 - 提升解析速度
-- babel-loader。JS转化缓存。
-- uglify js。（terser-webpack-plugin）
-- 模块解析缓存。（cache-loader）
+# 多进程，多实例构建：资源并行`压缩` - terser-webpack-plugin
+- `terser-webpack-plugin`并行压缩。（支持ES6压缩）
+```js
+optimization: {
+  minimizer: {
+    new TerserPlugin({
+      paraller: 4 // cpu核心
+    })
+  }
+}
+```
 
-## 缩小构建目标
+# dll分包
+
+## 对比externals
+- 优点：external 会将包分割成多个工具包，`对基础库进行分离`；
+- 缺点：
+  - 需要各自指定`CDN`，可能会产生多个`script`标签。
+  - `splitChunk`，还会对基础库里面的代码进行分析。
+
+## 进一步分包 - 预编译资源模块
+- 原理：将多个基础库包装成一个包；不分析里面基础库的代码。
+- 操作：
+  - 在externals，或者splitChunks之上进一步进行分包，将多个基础库通过dllPlugin打成一个包。
+  - 通过`dllPlugin`提取多个组件里的包，生成包同时，也会生成一个`manifest.json`文件。可以通过 `dllReferencePlugin` 通过映射到相应的依赖上。
+
+# 缓存 - 提升解析速度
+- `babel-loader`。JS转化缓存。
+- `terser-webpack-plugin`。代码压缩缓存，
+- `cache-loader`。模块解析缓存。
+```js
+// babel-loader
+use: {
+  loader: 'babel-loader',
+  options: {
+    cacheDirectory: true // 开启babel-loader缓存
+  }
+}
+
+```
+
+# 缩小构建目标
 - 减少文件搜索范围
   - 优化resolve.modules，减少模块搜索层级。
   - 优化resolve.mainFields，入口文件
@@ -35,23 +64,23 @@
   - 合理应用alias。
 - babel-loader。不解析node_module
 
-## 资源体积压缩
+# 资源体积压缩
 
-###  图片压缩
-- image-webpack-plugin。「imagemin」
-- 压缩原理：
-  - pngquant。将图像转化为具有alpha通道的更高效的8位png格式（比24/32位小60~80%）。
-  - pngcrush。不同压缩级别，降低png IDAT数据流大小，压缩级别越多，体积越小
-  - optipng。重新压缩
+##  图片压缩
+- `image-webpack-plugin`。「imagemin」
+- `PNG`压缩原理：
+  - pngquant。将图像转化为具有`alpha通道`的更高效的8位png格式（比24/32位小60~80%）。
+  - pngcrush。不同`压缩级别`，降低png IDAT数据流大小，压缩级别越多，体积越小
+  - optipng。类似`pngcrush`。只是在pngcrush基础上再多几次压缩。
   - tinypng。24位转8位，非必要的metadata会被剥离。
 
-### tree shaking css
+## tree shaking css
 - 如果模块一个函数被引用了，就把所有的方法都引入。
-- purifyCSS，遍历代码。识别用到的css，没有就标记。
-- uncss。jsdom加载。
+- `purgecss-webpack-plugin`，需要配合`mini-css-extract-plugin`等能提取css的插件一起使用。遍历代码。识别用到的css，没有就标记。
+- `uncss`。需要HTML通过jsdom加载，其次样式需要通过`PostCSS`加载。然后通过`document.querySelector`识别文件里不存在的选择器。
 
-### 动态polyfill
-- babel-polyfill。
-- polyfill-service。通过UA拿到引擎，动态下发polyfill。
+## 动态polyfill
+- babel-polyfill。包体积200+KB
+- `polyfill-service`。通过UA拿到引擎,请求接口动态下发polyfill。
 
 ![](/image/webpack.png)
