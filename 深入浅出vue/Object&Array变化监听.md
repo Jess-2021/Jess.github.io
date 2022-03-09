@@ -197,9 +197,9 @@ ob.dep.notify() // 向依赖发送通知
 - 同时，对数组进行字面量操作的不能被监听到变化。
 
 ## 依赖收集整体流程
-- 初始化时，data 里的数据会转化为响应式对象，会为每个对象设置一个实例化的`Dep`，用于管理依赖。
-- 同时，通过`Dep.target`设置一个全局唯一的当前执行的`Watcher`。
+- 初始化时，`data、watch、computed` 会转化为响应式对象，`defineReactive` 会为每个对象设置一个实例化的 `Dep`，用于管理依赖。
+- 同时，通过`Dep.target`设置一个当前组件下（通过 `vm: this`）唯一的当前执行的`Watcher`。
 - 当属性被访问时，触发`getter`，调用`dep.depend()`，收集当前`watcher`到依赖。
-- 属性修改时，触发`setter`，调用`dep.notify()`，遍历收集到的依赖（`watcher`），并调用每个`watcher`的`update()`，然后回自动完成更新操作。
+- 属性修改时，如果是对象会将其转化为响应式，并触发`setter`，调用`dep.notify()`，遍历收集到的依赖（`watcher`），并调用每个`watcher`的`update()`，然后回自动完成更新操作。
 
 - 同时，更新时，会有一个`scheduler`的概念，是一个队列，会存放等待被执行的`watcher`，同一个watcher只会放在`nextTick`执行一次。
