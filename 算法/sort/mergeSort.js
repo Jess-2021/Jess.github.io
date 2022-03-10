@@ -1,4 +1,7 @@
 // 归并排序
+// 时间：稳定 O(nlogn)
+// 空间：O(N)
+// 稳定
 function mergeSort(arr, left, right) {
   if (right <= left) return
   let mid = (right + left) >> 1
@@ -21,28 +24,6 @@ function merge(arr, left, right, mid) {
   }
 }
 
-function mergeSort(arr, left, right) {
-  if (left >= right) return
-  let mid = (right + left) >> 1
-  mergeSort(arr, left, mid)
-  mergeSort(arr, mid + 1, right)
-  merge(arr, left, right, mid)
-}
-
-function merge(arr, left, right, mid) {
-  let temp = [], i = left, j = mid + 1, idx = 0
-  // 两数组合并成一个时
-  while(i <= mid && j <= right) {
-    temp[idx++] = arr[i] > arr[j] ? arr[j++] : arr[i++]
-  }
-  while(i <= mid) temp[idx++] = arr[i++]
-  while(j <= mid) temp[idx++] = arr[j++]
-
-  for(let k = 0; k < temp.length; k++) {
-    arr[left + k] = temp[k]
-  }
-}
-
-let arr = [2,5,2,8,9,4]
-mergeSort(arr, 0, 5)
+let arr = [8,5,9,7,4,15,0,9,3]
+mergeSort(arr, 0, arr.length - 1)
 console.log(arr)
