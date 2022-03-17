@@ -6,15 +6,15 @@
 
 ## 2. 如何追踪变化：
 - 通过`Object.defineProperty`上添加属性改变时和访问时的钩子。在`getter`中收集相应的依赖，收集到的也就是`「Dep」`。当属性改变时在`setter`对所有收集到的依赖循环进行相应的操作。
-- `vm.$watch`，在创建一个watch时，会以watcher的身份调用一次值，这时会调用getter，同时，watcher也会被收集到。
-- 对于对象，需要对所有的属性「data」，进行设置getter和setter，`「class Observer」`会对所有的属性转化为`getter/setter`形式，这时就生成我们说的「响应式对象」。
+- `vm.$watch`，在创建一个watch时，会以watcher的身份调用一次值，这时会调用getter，同时，`watcher`也会被收集到。
+- 对于对象，需要对所有的属性「data」，进行设置`getter和setter`，`「class Observer」`会对所有的属性转化为`getter/setter`形式，这时就生成我们说的「响应式对象」。
 ### 缺陷：监听只能监听到对象属性的访问和修改。监听不了对象中新属性的新增和删除。
 
 ## 3. 如何收集依赖：
-- 通过getter收集依赖，在setter触发依赖。
-- 在data的数据里会保存一份该组件的`「dep」`，通过getter将收集到的依赖存放到dep里。setter触发时通知收集到的依赖，做相应的变化。
+- 通过`getter`收集依赖，在`setter`触发依赖。
+- 在data的数据里会保存一份该组件的`dep`，通过`getter`将收集到的依赖存放到dep里。setter触发时通知收集到的依赖，做相应的变化。
 
-- 问题：收集到的依赖可能会有多种类型，template，watcher等。不好通知。「可以通过设置一个中介，在平时只通知到一个，中介再通知其他地方」
+- 问题：收集到的依赖可能会有多种类型，template，watcher等。不好通知。可以通过`设置一个中介，在平时只通知到一个，中介再通知其他地方`。
 ```JS
 export default class Dep {
   constructor() {
@@ -62,9 +62,9 @@ function defineReactive(data, key, val) {
 }
 ```
 ## 4. 谁使用了响应式数据? - watcher
-- 数据变化了，通过watcher，watcher再执行收集到依赖中的的回调函数。「其实也就是一个依赖，所以将watcher加入Dep里就可以了」。
+- 数据变化了，通过watcher，watcher再执行收集到依赖中的的回调函数。`其实 watcher 也是一个依赖，所以将 watcher 加入Dep里就可以了`。
 - 实现：将一个外部的对象调用一下data的数据，就能触发收集，最后再清除。（类似寄生继承）
-- 初始化时包括了对vm._watcher的处理。实例上有一个watcher，会监听这个组件中的所有状态，组件里用到的所有状态的依赖列表都会收集到vm._watcher中。状态变化时，会通知vm._watcher,然后它vW在调用DOM进行重新渲染。
+- 初始化时包括了对`vm._watcher`的处理。实例上有一个watcher，会监听这个组件中的所有状态，组件里用到的所有状态的依赖列表都会收集到`vm._watcher`中。状态变化时，会通知`vm._watcher`,然后它vW在调用DOM进行重新渲染。
 ```js
 vm.$watch('a.b.c', function(newVal, oldVal) {
   // 在a.b.c变化时触发后面的回调，只需要将watcher实例收集到a.b.c属性的Dep即可
@@ -154,15 +154,15 @@ if (Array.isArray(value)) {
   value.__proto__ = arrayMethods
 }
 ```
-- 同时，拦截时如果浏览器不兼容__proto__，则直接将方法「设置在被监听的数组」上。
+- 同时，拦截时如果`浏览器不兼容__proto__`，则直接将方法「设置在被监听的数组」上。
 
 ## 3. 如何收集依赖？
 - getter里收集依赖，在拦截器里触发依赖。
-- 收集的位置，同样在getter中进行收集，在拦截器中触发依赖。同时，又有拦截器，所以将依赖保存的位置，保存在「Observer的实例」上。之所以在getter里收集依赖，因为defineReactive中的val很可能是一个数组
+- 收集的位置，同样在getter中进行收集，在拦截器中触发依赖。同时，又有拦截器，所以将依赖，保存在「Observer的实例」上。
   ```JS
   function defineReactive(data, key, value) {
-    let childOb = observe(val) // 返回一个Observer实例，单例模式
-    let dep = new Dep()
+    let childOb = observe(val) // 数组方法变化时，会触发依赖更新
+    let dep = new Dep() // 1. 重新赋值时会触发set更新
     Object.defineProperty(data, key {
       // ...
       get: function() {
@@ -203,3 +203,4 @@ ob.dep.notify() // 向依赖发送通知
 - 属性修改时，如果是对象会将其转化为响应式，并触发`setter`，调用`dep.notify()`，遍历收集到的依赖（`watcher`），并调用每个`watcher`的`update()`，然后回自动完成更新操作。
 
 - 同时，更新时，会有一个`scheduler`的概念，是一个队列，会存放等待被执行的`watcher`，同一个watcher只会放在`nextTick`执行一次。
+- 如果是数组的话，会对数组的修改方法进行拦截，同时，新增一个Observe来收集执行方法时的依赖。

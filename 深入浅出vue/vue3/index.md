@@ -13,7 +13,7 @@
 - 组件之间的变化通过响应式通知更新，内部数据变化则通过虚拟DOM来更新。
 
 # JSX
-- JSX 在vue中最终也是解析为createVnode执行，适合在动态性较高的情况下使用。
+- JSX 在vue中最终也是解析为`createVnode`执行，适合在动态性较高的情况下使用。
 - 相比于 template 会缺少一些优化，template的限制比较多，但是 Vue 对其做了一部分优化。例如：
   - 静态属性的标记，直接越过 Diff 的过程；
   - @click 函数也做了一层cache 缓存。
@@ -40,14 +40,19 @@
   }
   ```
 
-## vue 做了什么优化 - 遵守 vue 的最佳实践
-- computed 缓存机制，比 watch 更好
-- template 激活vue内置静态标记，跳过diff，代码执行效率也能提高。
-- v-for 要有key，diff 里更高效复用标签。
-- `tree shaking`。
+## vue 做了什么优化
+1. Vue3 相比于 Vue2 虚拟DOM 上增加 `patchFlag` 字段。按需更新。`只标记需要更新的元素或者属性`。
+  ```JS
+  const patchElement = (...) => {
+    ...
+    if (patchFlag > 0) {}
+  }
+  ```
+2. `hoistStatic 静态提升`。静态节点进行提升，第一次创建后，后续执行函数会复用这个创建方法。
+3. `tree shaking`。
   - new Vue时的，vue2无法对其进行tree-shaking
   ```js
-  // vue2
+  // vue2 对象形式
   const app = new Vue({
     router,
     store
@@ -63,16 +68,27 @@
   - API。之前全局api都暴露在vue实例上，未被使用也无法被tree shaking。vue3将其api作为ES模块构建导出，从而可以被tree shaking。
   - `compiler`中，对于template的解析函数，也是通过 `esm import` 进来的.
   ![](/image/237ce858e266324cd60c0ee4c67c753.png)
-- Vue3 相比于 Vue2 虚拟DOM 上增加 `patchFlag` 字段。
-- 静态属性的标记，直接越过 Diff 的过程；
-- `事件缓存`。@click 函数也做了一层cache 缓存。
+4. `事件缓存`。@click 函数也做了一层cache 缓存。`更新时引用不变即视为静态节点`。
   - vue2中每次更新，render函数跑完之后 vnode绑定的事件都是一个全新生成的function。Vue3中传入的事件会自动生成并缓存一个内联函数在cache里，变为一个静态节点。 - 享元模式
+5. SSR 会讲一些静态标签，转化为文本。
+  ```JS
+  const msg = ref('Hello World!')
+  const aa = computed(() => msg)
 
+  // 动态绑定也是通过模板字符串添加进去
+  return (_ctx, _push, _parent, _attrs) => {
+    _push(`<!--[--><h1>${_ssrInterpolate(_unref(aa))}</h1><input><!--]-->`)
+  }
+  }
 
+  }
+  __sfc__.__file = "App.vue"
+  export default __sfc__
+  ```
+6. Fragments template和component 不必只有一个节点，会自动转成 `Fragments`.
 ## 响应式原理对比
 - vue2无法监听对象或数组新增、删除的元素。
   - 通过拦截数组方法；
   - Vue.set 监听对象数组新增属性，new 个新对象，然后将修改过后的对象深拷贝给新对象
 - Vue3
   - 能拦截对象的行为；但对象的新增和删除，.length的修改，Map、set、weakMap、weakSet的支持解决不了。
-  

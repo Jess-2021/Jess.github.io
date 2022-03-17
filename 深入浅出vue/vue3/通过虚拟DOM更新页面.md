@@ -6,7 +6,7 @@
 # patchElement
 
 ## 主要工作
-- 更新节点自己的属性；通过 patchFlag 可以做到按需更新：
+- 更新节点自己的属性；通过 `patchFlag` 可以做到按需更新：
   - 如果标记了 `FULL_PROPS`，就直接调用 patchProps。
   - 如果标记了其他属性，例如： `CLASS`，说明节点只有 class 属性是动态的，其他的属性都不需要`进行判断和 DOM 操作`。
   - 同时用到了位运算。对不同的 PatchFlags 进行判断。
@@ -53,7 +53,7 @@
 
   // 
   (a b c d) e f (g h)
-  (a b c) d) i f j (g h)
+  (a b c d) i f j (g h)
   ```
 
 ## 最长递增子序列 - vue2、vue3区别

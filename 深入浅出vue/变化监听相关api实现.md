@@ -2,8 +2,7 @@
 - 一句话原理：需要观察数据并收集`watcher`，当数据发生变化时，通知到watcher，并将新旧值传递给用户定义的回调函数。同时根据不同的options处理：sync，immediate，deep。
 
 ![](/image/e439e4df2c889600fd0bd43fc17d28a.png)
-- Watcher一个中介，数据变化时通知watch，然后再去通知其他地方。
-- 同时，如果观测的是一个函数，会直接覆盖getter。并且，函数里的所有数据都会被watcher观察 - `traverse`。
+- 如果观测的是一个函数，会直接覆盖getter。并且，函数里的所有数据都会被watcher观察 - `traverse`。
 - 需要处理三种watcher：user-watcher, compute-watcher, render-watcher
 ```JS
 // vm.$watch
@@ -34,7 +33,7 @@ class Watcher {
     }
     this.vm = vm
     this.cb = cb
-    this.value = this.get()
+    this.value = this.get() // 保存旧值，并且触发依赖收集
     this.deep = !!options.deep
 
     if (typeof expOrFn === 'function') {  // 如果expOrFn是函数
@@ -97,8 +96,8 @@ function defineComputed(target, key) {
 }
 
 function createComputedGetter (key) {
-  
-return function () {  // 返回函数
+
+  return function () {  // 返回函数
     const watcher = this._computedWatchers && this._computedWatchers[key]
     // 原来this还可以这样用，得到key对应的computed-watcher
     
