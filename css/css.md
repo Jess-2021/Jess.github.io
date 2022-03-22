@@ -31,5 +31,3 @@
   - 函数，CSS 支持一批特定的计算型函数：calc()，max,clamp,toggle...
 
 # css 规则 略
-
-# 

@@ -107,7 +107,7 @@ export function createAppAPI<HostElement>(
 - 核心渲染逻辑： setupComponent 、setupRenderEffect。执行setup函数，之后将组件里的
 
 ## setupComponent
-- setupComponent：执行 setup 函数。内部先初始化了 props 和 slots，并且执行 setupStatefulComponent 创建组件，而这个函数内部从 component 中获取 setup 属性。
+- setupComponent：执行 `setup` 函数。内部先`初始化了 props 和 slots`，并且执行 setupStatefulComponent 创建组件，而这个函数内部从 component 中获取 setup 属性。
 ```JS
 export function setupComponent(
   instance: ComponentInternalInstance,
@@ -132,7 +132,6 @@ function setupStatefulComponent(
   const Component = instance.type as ComponentOptions
   // 执行setup
   const { setup } = Component
-
   // ...
 }
 ```
