@@ -113,7 +113,7 @@ export function nextTick(cb, ctx) {
   }
 }
 ```
-- vue中有一个「队列」，每当需要渲染时，会推送到这个队列，在下一次事件循环中让watcher触发渲染的流程。而当watcher收到两个通知时，并不需要真实DOM两次修改，只需要更新虚拟DOM，在最后做一次性的修改即可。
+- vue中有一个「队列」，每当需要渲染时，会推送到这个队列，在下一次事件循环中让watcher（组件内的顶层watcher）触发渲染的流程。而当watcher收到两个通知时，并不需要真实DOM两次修改，只需要更新虚拟DOM，在最后做一次性的修改即可。
 - 变化监测 -> 组件watcher -> 虚拟DOM -> diff -> 更改DOM
 
 - 实现：将受到的watcher实例添加到队列中，缓存起来，在添加到队列时检查是否已经存在相同的watcher，如果不存在才将watcher实例添加到队列中。在下一次事件循环中，会将队列里的watcher依次触发，并清空队列。
@@ -124,7 +124,7 @@ export function nextTick(cb, ctx) {
     p.then(flushCallbacks) // flushCallbacks是依次执行列表里的所有依赖
   }
   ```
-- 问题：微任务优先级太高，可能会出现问题，在特殊场合可以强制使用宏任务的方法。当useMacroTask为true时，则用```macroTimeFunc```注册事件
+- 问题：微任务优先级太高，可能会出现问题，在特殊场合可以`强制使用宏任务`的方法。当useMacroTask为true时，则用`macroTimeFunc`注册事件
   - vue中优先使用setImmediate，再者messageChannel，setTimeout。
   - 微任务在Promise不支持时，也会降级为macroTimerFunc。
 
