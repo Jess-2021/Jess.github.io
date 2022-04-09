@@ -10,20 +10,20 @@
 8. seal。所有依赖build完成后，进行资源生成，进行优化
 9. emit。输出到dist
 
-# 2. compiler hooks
+# 2. compiler hooks - 触发时机，参数，示例
 ## 流程相关
 - before run
 - before after compile
-- make
-- after emit
-- done
+- compiler.hooks.make -> `正式开始编译`时触发（EntryPlugin 基于此钩子实现 entry 模块的初始化）
+- compilation.hooks.optimizeChunks -> `seal` 函数中，chunk 集合构建完毕后触发（SplitChunksPlugin）
+- compiler.hooks.done -> 编译完成后触发（webpack-bundle-analyzer 插件基于此钩子实现打包分析）
 
 ## 监听相关
 - watch run
 - watch close
 
 ## 3. compilation hook
-- addEntry -> addModuleChain
+- compiler.hooks.compilation -> 启动编译创建出 compilation 对象后触发
 - finish（错误上报）
 - seal。资源输出，优化
 
@@ -39,12 +39,16 @@
 1. `从入口开始编译模块`：在compile里触发`make钩子`，根据配置中的entry找出所有的入口文件，触发`compilation.addEntry`，转化为`dependence对象`，并加到compilation的entry里。
 
 2. 之后，会运行「buildModule」方法，其中会跑一个`loader-runner`，去执行loader，将module里的依赖经过转化。之后会运行「parser」方法，可以将依赖进行递归收集，存储到compilation上的module上。
+  - 在调用各种loader转化为JS文本时，会调用 `acorn` 将 JS 文本解析为`AST`；
+  - 为的是通过AST处理好依赖关系；
 
 3. 构建好后，会触发一个`finishModules钩子`，得到了每个模块被翻译后的内容以及它们之间的`依赖关系图`。并存放到composition的modules里。
 
 ## 生成dist
 
 - 生成对应的chunk后，会进入`seal环节`。做一系列的「优化和创建hash」或者根据传入的hash生产hash，并把内容放到「compilation里的asset」里。
+  - 构建ChunkGraph对象
+  - 按compilation.modules中，entry、动态引入的规`分别`分配不同的chunk对象（以至于之后有了SplitChunksPlugin等进一步分chunk的策略插件）；
 - 最后，emit阶段输出文件到硬盘。
 ## 5. module到chunk生成算法
 - 会将entry对应的module都生成一个chunk。

@@ -1,5 +1,6 @@
 # webpack - Compiler
 - webpack是基于事件流「发布订阅」的编程范式，一系列插件通过hooks的方式进行运行。
+- 而在 hooks 回调内部可以通过修改状态、调用上下文 api 等方式对 webpack 产生 side effect。这是不同于平常的发布订阅模式的地方；
 
 ## Tapable插件架构和hooks
 -  compiler，继承于Tapable的一系列钩子特性，来定义自己的钩子。
