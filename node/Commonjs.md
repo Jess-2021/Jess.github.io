@@ -44,8 +44,6 @@ console.log(exports) // { a: jess }
 let lib = require('module') // aa
 lib.a //undefined
 ```
-- ps: webpack 对于CJS的实现，`require`会替换掉`module`下面的`exports`引用。但内部还存留着`exports`。
-![](/image/ed499f52f94469b646e543a3f9c64ef.png)
 
 
 # 内置模块
