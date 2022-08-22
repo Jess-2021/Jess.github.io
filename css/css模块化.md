@@ -13,11 +13,11 @@
 
 ## 3. 后处理器PostCSS
 
-- 通过AST解析css，然后将分析结果进行处理。例如：stylelint校验语法，自动添加浏览器前缀，编译css next语法。
+- 通过 AST 解析 css，然后将分析结果进行处理。例如：stylelint 校验语法，自动添加浏览器前缀，编译css next语法。
 
 ## 4. css模块化
 
-- 解决CSS命名问题，层级结构不清晰，common.js庞大，代码难以复用。
+- 解决CSS命名问题，层级结构不清晰，common.js 庞大，代码难以复用。
 
 - 实现：
 

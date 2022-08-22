@@ -4,14 +4,14 @@
 - css压缩：`OptimizeCssAssetsWebpackPlugin` 去除css空格。
 
 - JS压缩：
-  - uglify. 缺点：不支持ES6
-  - terser. webpack内置，同时对于es6有更好的支持，底层还是基于uglify。
+  - `uglify`. 缺点：不支持ES6
+  - `terser`. webpack内置，同时对于es6有更好的支持，底层还是基于 `uglify`。
   - swc
 
 ## 移除不必要的模块
 - tree shaking.
   - 条件：
-    - （es5模块语法）
+    - （es5 模块语法）
     - mode 为 production
   - /*#__PURE__*/ 作用于语句层面。帮助terser标记一个语句有没有副作用。
   - sideEffects。作用于代码层面。如果被标记为无副作用的模块没有被直接导出使用，打包工具会跳过进行模块的副作用分析评估。
@@ -29,15 +29,15 @@
 ## code splitting - 切割大的chunk，利用HTTP的并行请求
 - 对于，图表，不可见屏幕下方的组件，其他页面均可暂缓加载；
 - 操作：
-  - import('/a') 动态加载模块
-  - React.lazy 动态加载组件
-  - lodable-component 动态加载路由，组件或模块
+  - `import('/a')` 动态加载模块
+  - `React.lazy` 动态加载组件
+  - `lodable-component` 动态加载路由，组件或模块
 
 - 原理：
   - ...
 
 ## bundle splitting - 分包缓存
-- 可根据develop tool coverage 查看chunk的使用情况。
+- 可根据 develop tool coverage 查看chunk的使用情况。
 - 分层缓存打包。
   - 最低频率更新的库，例如：vue；
   - 常用第三方库，例如：lodash => vendor

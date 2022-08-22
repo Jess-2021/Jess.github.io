@@ -1,7 +1,7 @@
 # 优势
-- 由于Vuex的模块化的命名空间模块的限制，例如：模块 user 中的 mutation add 方法，我们需要使用`commit('user/add')`来触发，但`这种字符串类型的拼接功能，在 TypeScript4 之前的类型推导中就很难实现`。
-- 通过composition API 和 Option API，使用组合 Store 方式更好地支持了TS类型推导。
-- 不同于vuex的单一状态树结构，能通过composition定义不同的状态树。
+- 由于 `Vuex` 的模块化的命名空间模块的限制，例如：模块 user 中的 mutation add 方法，我们需要使用 `commit('user/add')` 来触发，但这种字符串类型的拼接功能，在 TypeScript4 之前的类型推导中就很难实现。
+- 通过 `composition API` 和 `Option API`，使用组合 Store 方式更好地支持了 TS 类型推导。
+- 不同于 vuex 的单一状态树结构，能通过 composition 定义不同的状态树。
 
 # Pinna
 
@@ -63,7 +63,7 @@ function $patch(
   } else {
     // 否则就通过 mergeReactiveObjects 方法合并到 state 中，最后生成 subscriptionMutation 对象
   }
-  ... 
+  ...
   // 通过 triggerSubscriptions 方法触发数据的更新。
   triggerSubscriptions(
     subscriptions,
