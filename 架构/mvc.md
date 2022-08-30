@@ -30,10 +30,10 @@
 
 # MVP
 
-## 1. 是什么：和MVC的区别是，使用了Presenter对视图和模型进行解耦，model和view之间都通过presenter进行数据传输。
+和MVC的区别是，使用了Presenter对视图和模型进行解耦，model和view之间都通过presenter进行数据传输。
 
-  ### 1.1 presenter
-  - 可以理解成松散的控制器，其中包含了视图的UI业务逻辑，所有从视图发出的事件，都会代理到Presenter，同时P也通过视图暴露的接口与其通信。
+## 1.1 presenter
+- 可以理解成松散的控制器，其中包含了视图的UI业务逻辑，所有从视图发出的事件，都会代理到Presenter，同时P也通过视图暴露的接口与其通信。
 
 ## 1.2 两种变种
 - 被动视图「Passive view」：

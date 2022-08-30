@@ -35,7 +35,7 @@ export default class MyPlugin {
 - 配合`external`排除不需要被收集依赖的模块，在用plugin`注入CDN。
 
 ## DllPlugin， DllReferencePlugin - 分包
-- 进一步分包「预编译资源模块」。对框架库进行提取，打成一个包，可以通过`manifest.json` 自动关联到需要的包
+- 进一步分包「预编译资源模块」。对框架库进行提取，打成一个包，可以通过 `manifest.json` 自动关联到需要的包
 
 ## terser-webpack-plugin（JS）
 - 多进程并行压缩JS，同时可以进行`缓存`。
