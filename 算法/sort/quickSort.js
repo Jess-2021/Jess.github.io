@@ -29,28 +29,30 @@ function partition(list, start, end) {
   return counter
 }
 
-
-function quickSort(arr, start, end) {
-  if (end <= start) return
-  let pivot = partition(arr, start, end)
-  quickSort(arr, start, pivot - 1)
-  quickSort(arr, pivot + 1, end)
+function quickSort(arr, startIdx, endIdx) {
+  if (startIdx >= endIdx) return
+  let pivot = partition(arr, startIdx, endIdx)
+  quickSort(arr, startIdx, pivot - 1)
+  quickSort(arr, pivot + 1, endIdx)
 }
 
 function partition(list, start, end) {
-  let pivot = end, counter = start
+  let smallCounter = start, pivot = end
   for(let i = start; i < end; i++) {
-    let pivotItem = list[pivot]
-    if (list[i] < pivotItem) {
-      [list[i], list[counter]] = [list[counter], list[i]]
-      counter++;
+    if (list[i] < list[pivot]) {
+      let prev = list[smallCounter]
+      list[smallCounter] = list[i]
+      list[i] = prev
+      smallCounter++
     }
   }
-  [list[pivot], list[counter]] = [list[counter], list[pivot]]
+  let prev = list[smallCounter]
+  list[smallCounter] = list[pivot]
+  list[pivot] = prev
 
-  return counter
+  return smallCounter
 }
 
 let arr = [8,5,9,7,4,15,0,9,3]
-quickSort( 0, 8)
+quickSort(arr, 0, 8)
 console.log(arr)

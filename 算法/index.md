@@ -49,3 +49,34 @@ for(let i = 0; i < len; i++) {
 
 # 思想
 - 升维思想，空间换时间。
+
+# 深度优先
+当前层没有循环完，就进入到下一层的递归层
+```js
+function dfs(node, visited) {
+  visited.push(node)
+  for(n in node.children) {
+    if (visited.some(a => a === n)) {
+      dfs(n, visited)
+    }
+  }
+}
+```
+
+# 广度优先
+```js
+function BFS(start) {
+  let queue = [], visited = []
+  queue.push([start])
+  visited.push(start)
+
+  while(queue.length) {
+    node = queue.shift()
+    visited.push(node)
+    
+    process(node)
+    nodes = other_children(node)
+    queue.push(Array.from(nodes))
+  }
+}
+```

@@ -1,4 +1,5 @@
 // 1. 深度优先
+// 当前层没有循环完，就进入到下一层的递归层
 let visited = []
 function dfs(node, visited) {
   visited.push(node)
